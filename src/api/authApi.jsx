@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/auth";
+const API_URL = "https://authmern-backend-i3kc.onrender.com";
 
 // Signup function
 export const signup = async (userData) => {
