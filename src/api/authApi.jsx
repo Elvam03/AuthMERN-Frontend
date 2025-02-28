@@ -1,11 +1,11 @@
 import axios from "axios";
 
-const API_URL = "https://authmern-backend-i3kc.onrender.com";
+const API_URL = "https://authmern-backend-i3kc.onrender.com/api/auth"; // ✅ Add '/api/auth'
 
 // Signup function
 export const signup = async (userData) => {
   try {
-    const response = await axios.post(`${API_URL}/signup`, userData);
+    const response = await axios.post(`${API_URL}/signup`, userData); // ✅ Fix path
     return response.data;
   } catch (error) {
     throw error.response?.data?.message || "Signup failed";
@@ -15,7 +15,7 @@ export const signup = async (userData) => {
 // Login function
 export const login = async (userData) => {
   try {
-    const response = await axios.post(`${API_URL}/login`, userData);
+    const response = await axios.post(`${API_URL}/login`, userData); // ✅ Fix path
     return response.data;
   } catch (error) {
     throw error.response?.data?.message || "Login failed";
