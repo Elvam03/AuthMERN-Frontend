@@ -29,16 +29,11 @@ export const AuthProvider = ({ children }) => {
 
   const handleSignup = async (userData) => {
     try {
-        const response = await fetch("https://authmern-backend-i3kc.onrender.com/signup", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(userData),
-        });
+        const data = await signup(userData);
 
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.message || "Signup failed"); // Extract error message from backend
+        // Check if the API response contains an error message
+        if (!data.token) {
+            throw new Error(data.message || "Signup failed");
         }
 
         localStorage.setItem("token", data.token);
@@ -46,11 +41,10 @@ export const AuthProvider = ({ children }) => {
         setUser(userDataFetched);
         setError("");
     } catch (error) {
-        setError(error.message); // Pass the specific error message to state
-        throw error;
+        setError(error.response?.data?.message || "Signup failed"); 
+        throw error; // 🔴 Ensure the error is thrown so the UI handles it correctly
     }
 };
-
 
 
 
