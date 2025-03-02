@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    
+
     if (token) {
       fetchProtectedData(token)
         .then((data) => {
@@ -27,15 +27,32 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  // Handle signup
   const handleSignup = async (userData) => {
     try {
-      await signup(userData);
-      setError("");
+        const response = await fetch("https://authmern-backend-i3kc.onrender.com", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(userData),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Signup failed"); // Extract error message from backend
+        }
+
+        localStorage.setItem("token", data.token);
+        const userDataFetched = await fetchProtectedData(data.token);
+        setUser(userDataFetched);
+        setError("");
     } catch (error) {
-      setError(error.response?.data?.message || "Signup failed"); // ✅ Ensure error is a string
+        setError(error.message); // Pass the specific error message to state
+        throw error;
     }
-  };
+};
+
+
+
 
   // Handle login
   const handleLogin = async (userData) => {
