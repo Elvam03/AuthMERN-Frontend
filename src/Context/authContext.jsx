@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
 
   const handleSignup = async (userData) => {
     try {
-        const response = await fetch("https://authmern-backend-i3kc.onrender.com", {
+        const response = await fetch("https://authmern-backend-i3kc.onrender.com/signup", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(userData),
