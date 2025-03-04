@@ -1,24 +1,27 @@
 import axios from "axios";
 
-const API_URL = "https://authmern-backend-i3kc.onrender.com/api/auth"; // ✅ Add '/api/auth'
+const API_URL = "https://authmern-backend-i3kc.onrender.com/api/auth"; // ✅ Use HTTP for local dev
 
 // Signup function
 export const signup = async (userData) => {
   try {
-    const response = await axios.post(`${API_URL}/signup`, userData); // ✅ Fix path
+    const response = await axios.post(`${API_URL}/signup`, userData);
     return response.data;
   } catch (error) {
-    throw error.response?.data?.message || "Signup failed";
+    console.error("Signup Error:", error.response || error.message);
+    throw new Error(error.response?.data?.message || "Signup failed");
   }
 };
 
 // Login function
 export const login = async (userData) => {
   try {
-    const response = await axios.post(`${API_URL}/login`, userData); // ✅ Fix path
+    const response = await axios.post(`${API_URL}/login`, userData);
+    console.log("Login API Response:", response.data); // Debugging
     return response.data;
   } catch (error) {
-    throw error.response?.data?.message || "Login failed";
+    console.error("Login Error:", error.response || error.message);
+    throw new Error(error.response?.data?.message || "Login failed");
   }
 };
 
@@ -30,6 +33,7 @@ export const fetchProtectedData = async (token) => {
     });
     return response.data;
   } catch (error) {
-    throw error.response?.data?.message || "Unauthorized";
+    console.error("Fetch Protected Data Error:", error.response || error.message);
+    throw new Error(error.response?.data?.message || "Unauthorized");
   }
 };

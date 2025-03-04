@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import AuthContext from "../Context/authContext";
 import { Link } from "react-router-dom";
 import PasswordInput from "../Inputs/passwordInput"; // ✅ Import PasswordInput
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SignUp = () => {
     const { handleSignup } = useContext(AuthContext);
@@ -15,8 +17,7 @@ const SignUp = () => {
         confirmPassword: "",
     });
     const [errors, setErrors] = useState({});
-    const [error, setError] = useState("");
-    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [error, setError] = useState(""); // Stores the error message (if any)
 
     const validateForm = () => {
         const newErrors = {};
@@ -43,25 +44,19 @@ const SignUp = () => {
             setErrors((prevErrors) => ({ ...prevErrors, [e.target.name]: "" }));
         }
     };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validateForm()) return;
     
         try {
             await handleSignup(formData);
-            setShowSuccessModal(true);
-            setError(""); // ✅ Clear errors on success
+            toast.success("Signup successful! Redirecting to login...");
+            setTimeout(() => navigate("/login"), 2000);
         } catch (err) {
-            setError(err.message); // ✅ Display exact error from backend
-            setShowSuccessModal(false);
+            console.error("Signup Error:", err);
+            toast.error(err.message || "Signup failed. Try again.");
         }
     };
-    
-    
-
-    // console.log("Form Data Before Sending:", formData);
-
 
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-amber-50">
@@ -138,26 +133,8 @@ const SignUp = () => {
                             Log in
                         </Link>
                     </p>
-                    
-
                 </form>
             </div>
-
-            {/* ✅ Success Modal */}
-            {showSuccessModal && (
-                <div className="fixed inset-0 flex items-center justify-center bg-gray-50 bg-opacity-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg text-center">
-                        <h3 className="text-xl font-semibold mb-3">Account Created Successfully 🎉</h3>
-                        <p className="text-gray-600">You can now log in to your account.</p>
-                        <button
-                            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                            onClick={() => navigate("/login")}
-                        >
-                            Go to Login
-                        </button>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

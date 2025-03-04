@@ -6,7 +6,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(""); // ✅ Ensure it's a string
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
       fetchProtectedData(token)
         .then((data) => {
           setUser(data);
-          setError(""); // ✅ Clear error
+          setError("");
         })
         .catch(() => {
           localStorage.removeItem("token");
@@ -27,41 +27,62 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const handleSignup = async (userData) => {
+  const handleSignup = async (formData) => {
     try {
-        const data = await signup(userData);
+      const response = await fetch("https://authmern-backend-i3kc.onrender.com/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json();
 
-        // Check if the API response contains an error message
-        if (!data.token) {
-            throw new Error(data.message || "Signup failed");
-        }
+      if (!response.ok) {
+        throw new Error(data.message || "Signup failed");
+      }
 
-        localStorage.setItem("token", data.token);
-        const userDataFetched = await fetchProtectedData(data.token);
-        setUser(userDataFetched);
-        setError("");
+      return data;
     } catch (error) {
-        setError(error.response?.data?.message || "Signup failed"); 
-        throw error; // 🔴 Ensure the error is thrown so the UI handles it correctly
-    }
-};
-
-
-
-  // Handle login
-  const handleLogin = async (userData) => {
-    try {
-      const data = await login(userData);
-      localStorage.setItem("token", data.token);
-      const userDataFetched = await fetchProtectedData(data.token);
-      setUser(userDataFetched);
-      setError("");
-    } catch (error) {
-      setError(error.response?.data?.message || "Login failed"); // ✅ Ensure error is a string
+      throw error;
     }
   };
 
-  // Handle logout
+  const handleLogin = async (userData) => {
+    try {
+      const data = await login(userData);
+  
+      if (!data.token) {
+        throw new Error("Login failed: token not received");
+      }
+  
+      localStorage.setItem("token", data.token);
+  
+      const userDataFetched = await fetchProtectedData(data.token);
+  
+      console.log("User data after login:", userDataFetched); // Check backend response structure
+  
+      // Extract first and last name separately
+      const nameParts = userDataFetched.fullName ? userDataFetched.fullName.split(" ") : ["User"];
+      const firstName = nameParts[0];
+      const secondName = nameParts.length > 1 ? nameParts[1] : ""; // Ensure last name exists
+  
+      setUser({
+        firstName: userDataFetched.firstName || "", 
+        secondName: userDataFetched.secondName || "",
+        email: userDataFetched.email,
+      });
+      
+  
+      setError("");
+    } catch (error) {
+      console.error("Login Error:", error);
+      setError(error.message || "Login failed");
+    }
+  };
+  
+  
+
   const handleLogout = () => {
     localStorage.removeItem("token");
     setUser(null);
@@ -69,7 +90,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, handleSignup, handleLogin, handleLogout, loading, error }}>
+    <AuthContext.Provider
+      value={{ user, handleSignup, handleLogin, handleLogout, loading, error }}
+    >
       {children}
     </AuthContext.Provider>
   );
