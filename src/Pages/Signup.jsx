@@ -64,8 +64,8 @@ const SignUp = () => {
 
             {error && <p className="text-red-500 text-xs">{error}</p>}
 
-            <div className="w-96 border border-gray-300 rounded-lg bg-white px-7 py-10">
-                <form className="w-80 space-y-4" onSubmit={handleSubmit}>
+            <div className=" md:w-96 border border-gray-300 rounded-lg bg-white px-7 py-10">
+                <form className=" w-60 md:w-80 space-y-4" onSubmit={handleSubmit}>
                     <div className="w-full">
                         <input
                             type="text"

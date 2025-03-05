@@ -5,6 +5,7 @@ import Signup from "./Pages/Signup";
 import Dashboard from "./Pages/Dashboard";
 import AuthContext from "./Context/authContext";
 import { ToastContainer } from "react-toastify";
+import ProfilePage from "./Pages/ProfilePage";
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useContext(AuthContext);
@@ -22,6 +23,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/profilePage" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+
       </Routes>
     </div>
 

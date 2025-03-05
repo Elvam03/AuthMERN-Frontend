@@ -9,16 +9,16 @@ const Dashboard = () => {
   if (!user) return <Navigate to="/login" />;
 
   return (
-    
-    <div>
 
-      <div>
-        <Navbar/>
+    <div className="min-h-screen">
+
+      <div className="sticky top-0">
+        <Navbar />
       </div>
       <div className="flex flex-col items-center justify-center min-h-screen">
-      <h2 className="text-2xl font-bold mb-4">Welcome, {user?.firstName || "User"}!</h2>
-      <button onClick={handleLogout} className="p-2 bg-red-500 text-white">Logout</button>
-    </div>
+        <h2 className="text-2xl font-bold mb-4">Welcome, {user?.firstName || "User"}!</h2>
+        <button onClick={handleLogout} className="p-2 bg-red-500 text-white">Logout</button>
+      </div>
     </div>
   );
 };

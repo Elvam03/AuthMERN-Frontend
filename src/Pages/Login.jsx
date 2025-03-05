@@ -64,8 +64,8 @@ const Login = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-amber-50">
       <h2 className="text-2xl font-bold mb-4">Login</h2>
-      <div className="w-96 border border-gray-300 rounded-lg bg-white px-7 py-10">
-        <form className="w-80 space-y-4" onSubmit={handleSubmit}>
+      <div className="md:w-96 border border-gray-300 rounded-lg bg-white px-7 py-10">
+        <form className="w-60 md:w-80 space-y-4" onSubmit={handleSubmit}>
           {/* Email Input */}
           <div className="w-full">
             <input
