@@ -48,6 +48,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  
   const handleLogin = async (userData) => {
     try {
       const data = await login(userData);
@@ -62,17 +63,13 @@ export const AuthProvider = ({ children }) => {
   
       console.log("User data after login:", userDataFetched); // Check backend response structure
   
-      // Extract first and last name separately
-      const nameParts = userDataFetched.fullName ? userDataFetched.fullName.split(" ") : ["User"];
-      const firstName = nameParts[0];
-      const secondName = nameParts.length > 1 ? nameParts[1] : ""; // Ensure last name exists
-  
       setUser({
         firstName: userDataFetched.firstName || "", 
         secondName: userDataFetched.secondName || "",
         email: userDataFetched.email,
+        userId: userDataFetched._id,
+        token: data.token,  // ✅ Store token in state for API requests
       });
-      
   
       setError("");
     } catch (error) {
@@ -80,6 +77,8 @@ export const AuthProvider = ({ children }) => {
       setError(error.message || "Login failed");
     }
   };
+  
+
   
   
 
