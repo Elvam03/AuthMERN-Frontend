@@ -97,7 +97,7 @@ const ProfilePage = () => {
 
             const imageUrl = response.data.secure_url; // Cloudinary returns this URL
 
-            await axios.put(`https://authmern-backend-i3kc.onrender.com/api/profile/:${user.userId}`, {
+            await axios.put(`https://authmern-backend-i3kc.onrender.com/api/profile/${user.userId}`, {
                 [imageType]: imageUrl
             });
 
