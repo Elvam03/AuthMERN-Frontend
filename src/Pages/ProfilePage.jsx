@@ -120,17 +120,19 @@ const ProfilePage = () => {
         e.preventDefault();
     
         try {
-            // Send update request to backend
-            await axios.put(`https://authmern-backend-i3kc.onrender.com/api/profile/${userId}`, profileData);
+            const response = await axios.put(`https://authmern-backend-i3kc.onrender.com/api/profile/${user.userId}`, {
+                age: profileData.age,
+                phone: profileData.phone,
+                location: profileData.location
+            });
     
-            console.log("Profile updated successfully!");
-            
-            // Close the modal after successful update
-            closeModal();
+            console.log("Update response:", response.data);
+            setProfileData(response.data.user);
         } catch (error) {
-            console.error("Error updating profile:", error.response?.data || error.message);
+            console.error("Update failed:", error.response?.data || error.message);
         }
     };
+    
     
 
     return (
