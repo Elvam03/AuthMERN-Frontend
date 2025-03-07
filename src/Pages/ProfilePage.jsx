@@ -121,8 +121,7 @@ const ProfilePage = () => {
     
         try {
             const response = await axios.put(`https://authmern-backend-i3kc.onrender.com/api/profile/${user.userId}`, {
-                firstName: profileData.firstName,
-                secondName: profileData.secondName,
+               name: profileData.name,
                 email: profileData.email,
                 age: profileData.age,
                 phone: profileData.phone,
