@@ -167,7 +167,7 @@ const ProfilePage = () => {
                                 <img
                                     src={profileData.profileImage}
                                     alt="Profile"
-                                    className="w-40 h-40 rounded-full object-cover"
+                                    className="w-40 h-40 md:w-60 md:w-60 rounded-full object-cover"
                                 />
 
                                 {/* Profile Image Upload */}
