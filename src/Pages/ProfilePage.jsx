@@ -128,6 +128,7 @@ const ProfilePage = () => {
     
             console.log("Update response:", response.data);
             setProfileData(response.data.user);
+            closeModal();
         } catch (error) {
             console.error("Update failed:", error.response?.data || error.message);
         }
