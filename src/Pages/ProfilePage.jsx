@@ -44,85 +44,70 @@ const ProfilePage = () => {
     useEffect(() => {
         if (user) {
             setUserId(user.userId);
-    
+
             console.log("Fetching profile data for user:", user.userId);
-    
-            // Fetch updated user profile from backend
+
             axios.get(`https://authmern-backend-i3kc.onrender.com/api/profile/${user.userId}`)
                 .then(response => {
                     const userData = response.data;
 
                     const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 
-    
-                    // Ensure image URLs are properly set
-                    setProfileData((prevData) => ({
-                        ...prevData,
+                    setProfileData({
                         name: `${capitalize(userData.firstName)} ${capitalize(userData.secondName)}`.trim(),
                         email: userData.email || "",
-                        profileImage: userData.profileImage
-                            ? `https://authmern-backend-i3kc.onrender.com${userData.profileImage}`
-                            : "/Images/noprofile.png",
-                        backgroundImage: userData.backgroundImage
-                            ? `https://authmern-backend-i3kc.onrender.com${userData.backgroundImage}`
-                            : "/Images/background.jpg",
-                    }));
+                        profileImage: userData.profileImage || "/Images/noprofile.png",
+                        backgroundImage: userData.backgroundImage || "/Images/background.jpg",
+                        age: userData.age || "",
+                        phone: userData.phone || "",
+                        location: userData.location || ""
+                    });
                 })
                 .catch(error => {
                     console.error("Error fetching profile data:", error.response?.data || error.message);
                 });
         }
     }, [user]);
-    
-    
+
     const handleImageChange = (event, imageType) => {
         const file = event.target.files[0];
         if (!file) {
             console.error("No file selected!");
             return;
         }
-    
+
         handleImageUpload(file, imageType);
     };
-    
+
     const handleImageUpload = async (file, imageType) => {
         if (!file || !userId) {
             console.error("File or User ID missing!");
             return;
         }
-    
+
         const formData = new FormData();
-        formData.append(imageType, file);
-        formData.append("userId", userId);
-    
-        const endpoint = imageType === "profileImage"
-            ? "https://authmern-backend-i3kc.onrender.com/api/profile/upload-profileImage"
-            : "https://authmern-backend-i3kc.onrender.com/api/profile/upload-backgroundImage";
-    
-        console.log(`Uploading ${imageType} for user ID:`, userId);
-    
+        formData.append("file", file);
+        formData.append("upload_preset", "ml_default"); // Replace with Cloudinary preset
+
         try {
-            const response = await axios.post(endpoint, formData, {
-                headers: { "Content-Type": "multipart/form-data" }
+            const response = await axios.post(
+                "https://api.cloudinary.com/v1_1/dwawmlk54/image/upload",
+                formData
+            );
+
+            const imageUrl = response.data.secure_url; // Cloudinary returns this URL
+
+            await axios.put(`https://authmern-backend-i3kc.onrender.com/api/profile/${userId}`, {
+                [imageType]: imageUrl
             });
-    
-            console.log(`Upload success for ${imageType}:`, response.data);
-    
-            // Fetch only the updated image instead of the full profile
-            const updatedUserResponse = await axios.get(`https://authmern-backend-i3kc.onrender.com/api/profile/${userId}`);
-    
-            if (updatedUserResponse.data) {
-                console.log("Updated user data:", updatedUserResponse.data);
-    
-                // Update only the specific image that was changed
-                setProfileData((prevData) => ({
-                    ...prevData,
-                    [imageType]: updatedUserResponse.data[imageType]
-                        ? `https://authmern-backend-i3kc.onrender.com${updatedUserResponse.data[imageType]}?timestamp=${new Date().getTime()}`
-                        : prevData[imageType], // Keep the previous value if unchanged
-                }));
-            }
-    
+
+            setProfileData((prevData) => ({
+                ...prevData,
+                [imageType]: imageUrl
+            }));
+
+            console.log(`Updated ${imageType} successfully!`);
+
         } catch (error) {
             console.error("Upload failed:", error.response?.data || error.message);
         }
