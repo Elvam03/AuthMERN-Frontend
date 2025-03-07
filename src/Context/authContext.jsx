@@ -67,6 +67,9 @@ export const AuthProvider = ({ children }) => {
         firstName: userDataFetched.firstName || "", 
         secondName: userDataFetched.secondName || "",
         email: userDataFetched.email,
+        age: userDataFetched.age,
+        phone: userDataFetched.phone,
+        location: userDataFetched.location,
         userId: userDataFetched._id,
         token: data.token,  // ✅ Store token in state for API requests
       });
