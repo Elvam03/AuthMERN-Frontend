@@ -116,11 +116,22 @@ const ProfilePage = () => {
     // Inside your JSX
     <input type="file" onChange={handleImageChange} />
 
-    const handleFormSubmit = (e) => {
+    const handleFormSubmit = async (e) => {
         e.preventDefault();
-        console.log("Updated Profile Data:", profileData);
-        closeModal();
+    
+        try {
+            // Send update request to backend
+            await axios.put(`https://authmern-backend-i3kc.onrender.com/api/profile/${userId}`, profileData);
+    
+            console.log("Profile updated successfully!");
+            
+            // Close the modal after successful update
+            closeModal();
+        } catch (error) {
+            console.error("Error updating profile:", error.response?.data || error.message);
+        }
     };
+    
 
     return (
         <div>
