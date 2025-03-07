@@ -135,7 +135,7 @@ const ProfilePage = () => {
                 ...response.data.user // Only update changed fields
             }));
 
-            setProfileData(response.data.user);
+            // setProfileData(response.data.user);
             closeModal();
         } catch (error) {
             console.error("Update failed:", error.response?.data || error.message);
