@@ -143,7 +143,7 @@ const ProfilePage = () => {
             <div className="bg-gray-100">
                 {/* Background Image */}
                 <div
-                    className="relative bg-cover bg-center h-64"
+                    className="relative bg-cover h-64"
                     style={{
                         backgroundImage: `url(${profileData.backgroundImage})`,
                     }}
