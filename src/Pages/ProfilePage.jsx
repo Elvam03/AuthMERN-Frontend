@@ -143,7 +143,7 @@ const ProfilePage = () => {
             <div className="bg-gray-100">
                 {/* Background Image */}
                 <div
-                    className="relative bg-cover h-64"
+                    className="relative bg-cover bg-center h-64"
                     style={{
                         backgroundImage: `url(${profileData.backgroundImage})`,
                     }}
@@ -161,7 +161,7 @@ const ProfilePage = () => {
                     <div className="bg-teal-700 text-white p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="flex flex-col items-center">
                             {/* Profile Image */}
-                            <div className="w-32 h-32 rounded-full overflow-hidden relative">
+                            <div className="w-40 h-40 rounded-full overflow-hidden relative">
                                 <img
                                     src={profileData.profileImage}
                                     alt="Profile"
