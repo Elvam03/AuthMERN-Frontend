@@ -129,6 +129,12 @@ const ProfilePage = () => {
             });
     
             console.log("Update response:", response.data);
+
+            setProfileData((prevData) => ({
+                ...prevData,  // Keep existing fields
+                ...response.data.user // Only update changed fields
+            }));
+
             setProfileData(response.data.user);
             closeModal();
         } catch (error) {
