@@ -163,11 +163,11 @@ const ProfilePage = () => {
                     <div className="bg-teal-700 text-white p-6 rounded-lg grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="flex flex-col items-center">
                             {/* Profile Image */}
-                            <div className="w-36 h-36 rounded-full overflow-hidden relative">
+                            <div className="w-40 h-40 rounded-full overflow-hidden relative">
                                 <img
                                     src={profileData.profileImage}
                                     alt="Profile"
-                                    className="w-36 h-36 rounded-full object-cover"
+                                    className="w-40 h-40 rounded-full object-cover"
                                 />
 
                                 {/* Profile Image Upload */}
