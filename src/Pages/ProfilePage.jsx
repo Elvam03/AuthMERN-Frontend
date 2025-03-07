@@ -87,7 +87,7 @@ const ProfilePage = () => {
 
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("upload_preset", "ml_default"); // Replace with Cloudinary preset
+        formData.append("upload_preset", "my_preset_name"); // Replace with Cloudinary preset
 
         try {
             const response = await axios.post(
