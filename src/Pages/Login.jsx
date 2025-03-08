@@ -99,12 +99,18 @@ const Login = () => {
             Login
           </button>
 
-          <p className="m-3">
+          <p className="m-3 text-center">
+            <Link className="text-blue-500  hover:underline px-2" to="/forgotPassword">
+              Forgotten Password?
+            </Link>
+          </p>
+          <p className="m-3 text-center">
             Don't have an account?
             <Link className="text-blue-500 hover:underline px-2" to="/signup">
               Sign Up
             </Link>
           </p>
+          
         </form>
       </div>
     </div>
