@@ -14,12 +14,16 @@ const ResetPassword = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(`https://authmern-backend-i3kc.onrender.com/api/auth/reset-password/${token}`, { newPassword });
+            const response = await axios.post(
+                `https://authmern-backend-i3kc.onrender.com/api/auth/reset-password`, 
+                { token, newPassword } // Send token in the body
+            );
             setMessage(response.data.message);
         } catch (error) {
             setMessage("Failed to reset password");
         }
     };
+    
 
     return (
         <div className="bg-gray-100 ">
