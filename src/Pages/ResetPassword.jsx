@@ -1,23 +1,21 @@
 import { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 
 const ResetPassword = () => {
     const { token } = useParams();
-    const navigate = useNavigate(); // Hook for redirection
     const [newPassword, setNewPassword] = useState("");
     const [message, setMessage] = useState("");
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post(`https://authmern-backend-i3kc.onrender.com/api/auth/reset-password/${token}`, { newPassword });
+            const response = await axios.post(
+                "https://authmern-backend-i3kc.onrender.com/api/auth/reset-password",
+                { token, newPassword }, // ✅ Send token in body, not URL
+                { headers: { "Content-Type": "application/json" } }
+            );
             setMessage(response.data.message);
-            
-            // Redirect after a successful password reset
-            setTimeout(() => {
-                navigate("/login"); // Redirects to login page after 3 seconds
-            }, 3000);
         } catch (error) {
             setMessage("Failed to reset password");
         }
@@ -42,7 +40,16 @@ const ResetPassword = () => {
                         </button>
                     </div>
                 </form>
-                {message && <p className="text-center mt-3">{message}</p>}
+                {message && (
+                    <div className="text-center mt-3">
+                        <p>{message}</p>
+                        {message === "Password reset successfully" && (
+                            <Link to="/login" className="text-blue-500 underline mt-2 block">
+                                Go back to Login
+                            </Link>
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     );
