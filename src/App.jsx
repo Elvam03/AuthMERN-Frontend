@@ -8,6 +8,7 @@ import { ToastContainer } from "react-toastify";
 import ProfilePage from "./Pages/ProfilePage";
 import ForgotPassword from "./Pages/ForgotPassword";
 import ResetPassword from "./Pages/ResetPassword";
+import ResourcePage from "./Pages/ResourcePage";
 
 
 const ProtectedRoute = ({ children }) => {
@@ -29,6 +30,8 @@ function App() {
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/profilePage" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+        <Route path="/resourcePage" element={<ProtectedRoute><ResourcePage /></ProtectedRoute>} />
+
         
 
       </Routes>
