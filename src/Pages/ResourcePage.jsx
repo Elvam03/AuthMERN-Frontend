@@ -8,6 +8,8 @@ const ResourcePage = () => {
 
 
     if (!user) return <Navigate to="/login" />;
+  const { user } = useContext(AuthContext);
+
 
     const [activeTab, setActiveTab] = useState('news');
     const [expandedCard, setExpandedCard] = useState(null);
