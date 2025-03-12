@@ -48,42 +48,41 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  
   const handleLogin = async (userData) => {
     try {
-      const data = await login(userData);
-  
-      if (!data.token) {
-        throw new Error("Login failed: token not received");
-      }
-  
-      localStorage.setItem("token", data.token);
-  
-      const userDataFetched = await fetchProtectedData(data.token);
-  
-      console.log("User data after login:", userDataFetched); // Check backend response structure
-  
-      setUser({
-        firstName: userDataFetched.firstName || "", 
-        secondName: userDataFetched.secondName || "",
-        email: userDataFetched.email,
-        age: userDataFetched.age,
-        phone: userDataFetched.phone,
-        location: userDataFetched.location,
-        userId: userDataFetched._id,
-        token: data.token,  // ✅ Store token in state for API requests
-      });
-  
-      setError("");
-    } catch (error) {
-      console.error("Login Error:", error);
-      setError(error.message || "Login failed");
-    }
-  };
-  
+        const data = await login(userData);
 
-  
-  
+        if (!data.token) {
+            throw new Error("Login failed: token not received");
+        }
+
+        localStorage.setItem("token", data.token);
+
+        const userDataFetched = await fetchProtectedData(data.token);
+
+        console.log("User data after login:", userDataFetched); // Debugging
+
+        // ✅ Define userObj BEFORE using it
+        const userObj = {
+            firstName: userDataFetched.firstName || "", 
+            secondName: userDataFetched.secondName || "",
+            email: userDataFetched.email,
+            age: userDataFetched.age,
+            phone: userDataFetched.phone,
+            location: userDataFetched.location,
+            userId: userDataFetched._id,  // ✅ Ensure _id is stored properly
+            token: data.token, 
+        };
+
+        setUser(userObj);
+        localStorage.setItem("user", JSON.stringify(userObj));  // ✅ Store full user object in localStorage
+
+        setError("");
+    } catch (error) {
+        console.error("Login Error:", error);
+        setError(error.message || "Login failed");
+    }
+};
 
   const handleLogout = () => {
     localStorage.removeItem("token");

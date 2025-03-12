@@ -1,14 +1,13 @@
-import React, { useState } from 'react';
-import { Link } from "react-router-dom";
+import React, { useState, useEffect, useContext } from 'react';
 import { FaEllipsisV } from 'react-icons/fa';
 import { Navigate } from "react-router-dom";
 import Navbar from "../Components/Navbar";
+import AuthContext from '../Context/authContext';
 
 const ResourcePage = () => {
 
-
+    const { user } = useContext(AuthContext);
     if (!user) return <Navigate to="/login" />;
-  const { user } = useContext(AuthContext);
 
 
     const [activeTab, setActiveTab] = useState('news');
@@ -17,47 +16,11 @@ const ResourcePage = () => {
     const [menuOpen, setMenuOpen] = useState(null);
     const [favorites, setFavorites] = useState([]);
     const [successMessage, setSuccessMessage] = useState("");
+    const [newsAndBlog, setNewsAndBlog] = useState([]);
+    const [articles, setArticles] = useState([]);
+    const [resources, setResources] = useState([]);
 
-    const newsAndBlog = [
-        {
-            id: 1,
-            title: "AI-Powered Physiotherapy in Scotland",
-            description: "Physiotherapy and AI",
-            content: "Scotland has introduced 'Kirsty' an AI-powered virtual physiotherapist, to address back pain and reduce NHS waiting times. Developed by Flok Health, this service allows nearly a million people in the Lothians to book same-day appointments via a phone app, providing sessions and treatment exercises. Initial feedback from a pilot with NHS Lothian's occupational health service was overwhelmingly positive, leading to its regional expansion. Researchers will evaluate its effectiveness, potentially leading to more virtual NHS consultations nationwide",
-            timestamp: "2025-01-28T10:30:00",
-        },
-        {
-            id: 2,
-            title: "Aquatic Therapy, a rising trend in Physical Therapy",
-            description: "Discover what's new in the world of physiotherapy.",
-            content: "The field is witnessing advancements in technology, including the adoption of aquatic therapy. Also known as hydrotherapy, this therapeutic technique offers a low-impact environment for rehabilitation. Aquatic therapy is recognized for its therapeutic benefits, such as reduced joint stress and enhanced flexibility, making it an attractive option for diverse patient populations. Clinicians incorporating aquatic therapy into their facilities will witness its efficacy in helping address musculoskeletal issues and promote patient well-being. As this trend continuously gains momentum, physical therapists should consider its potential to enhance patient outcomes and satisfaction.",
-            timestamp: "2025-01-28T10:30:00",
-        },
 
-    ];
-
-    const articles = [
-        {
-            id: 1,
-            title: "Understanding Chronic Pain",
-            description: "An in-depth look at chronic pain.",
-            timestamp: "2025-01-28T10:30:00",
-            causes: "Chronic pain can be caused by past injuries, nerve damage, or underlying diseases.",
-            diagnosis: "Doctors use MRI, CT scans, and patient history to diagnose chronic pain.",
-            treatment: "Treatment includes medication, physical therapy, and lifestyle changes.",
-            exercise: "Stretching, yoga, strength exercises."
-        },
-        {
-            id: 2,
-            title: "Benefits of Regular Exercise",
-            description: "Why staying active is essential for health.",
-            timestamp: "2025-01-28T10:30:00",
-            causes: "Lack of physical activity leads to weak muscles and poor circulation.",
-            diagnosis: "Sedentary lifestyle can be diagnosed through BMI, heart rate, and endurance tests.",
-            treatment: "Regular movement, proper nutrition, and medical supervision.",
-            exercise: "Cardio workouts, strength training, flexibility exercises."
-        },
-    ];
 
     const handleFilter = (filter) => {
         setActiveFilter(filter);
@@ -65,43 +28,93 @@ const ResourcePage = () => {
 
     const filteredContent = (data) => {
         if (activeFilter === 'favorites') {
-            return data.filter((item) => favorites.includes(item.id));
+            return data.filter((item) => favorites.includes(item._id));
         }
         if (activeFilter === 'latest' && activeTab === 'news') {
-            return data.filter((item) => new Date(item.timestamp) > Date.now() - 7 * 24 * 60 * 60 * 1000);
+            return data.filter((item) => new Date(item.createdAt) > Date.now() - 7 * 24 * 60 * 60 * 1000);
         }
         return data;
     };
 
     const handleMenuToggle = (id) => {
-        setMenuOpen(menuOpen === id ? null : id);
+        setMenuOpen(prev => (prev === id ? null : id)); // Toggle only the clicked item
     };
 
 
-    const handleShare = (id) => {
-        console.log(`Shared item ${id}`);
-        setMenuOpen(null);
-    };
-
-    const handleToggleFavorite = (id) => {
-        if (favorites.includes(id)) {
-            setFavorites(favorites.filter((favId) => favId !== id));
-            setSuccessMessage("Removed from favorites ❌");
-        } else {
-            setFavorites([...favorites, id]);
-            setSuccessMessage("Added to favorites ✅");
+    useEffect(() => {
+        const fetchResourcesAndFavorites = async () => {
+            try {
+                // ✅ Fetch resources (NO TOKEN REQUIRED)
+                const resResources = await fetch('https://authmern-backend-i3kc.onrender.com/api/resources');
+                const dataResources = await resResources.json();
+    
+                if (Array.isArray(dataResources)) {
+                    setNewsAndBlog(dataResources.filter(item => item.type === 'news'));
+                    setArticles(dataResources.filter(item => item.type === 'article'));
+                }
+    
+                // ✅ Fetch user's favorite resources only if logged in
+                if (user) {
+                    const resFavorites = await fetch(`https://authmern-backend-i3kc.onrender.com/api/resources/favorites`, {
+                        headers: { Authorization: `Bearer ${user.token}` },
+                    });
+    
+                    const dataFavorites = await resFavorites.json();
+                    console.log("Fetched Favorites:", dataFavorites.favorites); // Debugging
+    
+                    if (resFavorites.ok) {
+                        setFavorites(dataFavorites.favorites.map(fav => fav._id)); // Store correct favorite IDs
+                    }
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        };
+    
+        fetchResourcesAndFavorites();
+    }, [user]); // Runs whenever the user logs in or changes
+    
+    
+    
+    const handleToggleFavorite = async (id) => {
+        console.log("Toggling favorite for ID:", id); // Debugging
+    
+        if (!id) {
+            console.error("Invalid ID received:", id);
+            return;
         }
-
-        setTimeout(() => {
-            setSuccessMessage("");
-        }, 3000);
-
-        setMenuOpen(null);
+    
+        try {
+            const isRemoving = favorites.includes(id); // Check if it's a removal operation
+    
+            const res = await fetch(`https://authmern-backend-i3kc.onrender.com/api/resources/favorites/${id}`, {
+                method: isRemoving ? "DELETE" : "POST", // Use DELETE for removal
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${user.token}`,
+                },
+                body: isRemoving ? null : JSON.stringify({ resourceId: id }), // No body needed for DELETE
+            });
+    
+            const data = await res.json();
+            console.log("Favorite API Response:", data); // Debugging
+    
+            if (res.ok) {
+                setFavorites((prev) =>
+                    isRemoving ? prev.filter((favId) => favId !== id) : [...prev, id]
+                );
+    
+                setSuccessMessage(isRemoving ? "Removed from favorites ❌" : "Added to favorites ✅");
+    
+                setTimeout(() => setSuccessMessage(""), 3000);
+            } else {
+                console.error("Failed to update favorites", data);
+            }
+        } catch (error) {
+            console.error("Error updating favorites:", error);
+        }
     };
-
-
-
-
+    
     return (
         <div className='bg-gray-100 min-h-screen'>
             {/* ✅ Success Notification */}
@@ -148,12 +161,6 @@ const ResourcePage = () => {
                                 All
                             </button>
                             <button
-                                className={`filter-button px-8 py-2 mx-2 rounded-full ${activeFilter === 'latest' ? 'bg-blue-500 text-white' : 'border border-blue-500'}`}
-                                onClick={() => handleFilter('latest')}
-                            >
-                                Latest
-                            </button>
-                            <button
                                 className={`filter-button px-8 py-2 mx-2 rounded-full ${activeFilter === 'favorites' ? 'bg-blue-500 text-white' : 'border border-blue-500'}`}
                                 onClick={() => handleFilter('favorites')}
                             >
@@ -177,64 +184,65 @@ const ResourcePage = () => {
                             >
                                 Favorites
                             </button>
-                            <button
-                                className={`filter-button px-8 py-2 mx-2 rounded-full ${activeFilter === 'orthopedic' ? 'bg-blue-500 text-white' : 'border border-blue-500'}`}
-                                onClick={() => handleFilter('orthopedic')}
-                            >
-                                Orthopedic
-                            </button>
-                            <button
-                                className={`filter-button px-8 py-2 mx-2 rounded-full ${activeFilter === 'neurological' ? 'bg-blue-500 text-white' : 'border border-blue-500'}`}
-                                onClick={() => handleFilter('neurological')}
-                            >
-                                Neurological
-                            </button>
-
                         </div>
                     )}
                 </div>
 
                 {activeTab === 'news' && (
                     <div className="news-tab">
-                        {filteredContent(newsAndBlog).map((item) => {
-                            const formattedTimestamp = new Intl.DateTimeFormat('en-US', {
-                                dateStyle: 'medium',
-                                timeStyle: 'short',
-                            }).format(new Date(item.timestamp));
+                        {filteredContent(newsAndBlog).map((item, index) => {
+                            // console.log("Timestamp received:", item.createdAt); // Debugging log
 
+                            let formattedTimestamp = "No Date Available"; // Default fallback
+
+                            if (item.createdAt) {  // Use `createdAt` for timestamp
+                                const date = new Date(item.createdAt); // Convert string to Date object
+
+                                if (!isNaN(date.getTime())) { // Ensure it's a valid date
+                                    formattedTimestamp = new Intl.DateTimeFormat('en-US', {
+                                        dateStyle: 'medium',
+                                        timeStyle: 'short',
+                                    }).format(date);
+                                }
+                            }
                             return (
-                                <div key={item.id} className="relative content-card mb-4 mx-3 p-4 bg-white border rounded shadow-sm">
+                                <div
+                                    key={item._id || index} // Ensure uniqueness
+                                    className="relative content-card mb-4 mx-3 p-4 bg-white border rounded shadow-sm"
+                                >
+                                    {/* Menu Button */}
                                     <div className="absolute top-2 right-2">
-                                        <button onClick={() => handleMenuToggle(item.id)} className="text-gray-600">
+                                        <button onClick={() => handleMenuToggle(item._id)} className="text-gray-600">
                                             <FaEllipsisV />
                                         </button>
-                                        {menuOpen === item.id && (
-
-
+                                        {menuOpen === item._id && (
                                             <div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-lg">
                                                 <button
                                                     className="block w-full px-4 py-2 text-left hover:bg-gray-100"
-                                                    onClick={() => handleToggleFavorite(item.id)}
+                                                    onClick={() => handleToggleFavorite(item._id)}
                                                 >
-                                                    {favorites.includes(item.id) ? "Remove from Favorites" : "Add to Favorites"}
+                                                    {favorites.includes(item._id) ? "Remove from Favorites" : "Add to Favorites"}
                                                 </button>
                                             </div>
-
-
                                         )}
                                     </div>
 
+                                    {/* Content */}
                                     <h3 className="text-xl font-semibold">{item.title}</h3>
                                     <p className="text-gray-700">{item.description}</p>
                                     <p className="text-sm text-gray-500">{`Posted on: ${formattedTimestamp}`}</p>
+
+                                    {/* Expandable Content */}
                                     <button
                                         className="text-blue-500 hover:underline"
-                                        onClick={() => setExpandedCard(expandedCard === item.id ? null : item.id)}
+                                        onClick={() => setExpandedCard(expandedCard === item._id ? null : item._id)}
                                     >
-                                        {expandedCard === item.id ? 'Show Less' : 'Read More'}
+                                        {expandedCard === item._id ? 'Show Less' : 'Read More'}
                                     </button>
-                                    {expandedCard === item.id && <p className="mt-2 text-gray-600">{item.content}</p>}
+                                    {expandedCard === item._id && <p className="mt-2 text-gray-600">{item.content}</p>}
+
                                 </div>
+
                             );
                         })}
                     </div>
@@ -242,63 +250,85 @@ const ResourcePage = () => {
 
                 {activeTab === 'articles' && (
                     <div className="articles-tab">
-                        {filteredContent(articles).map(item => (
-                            <div key={item.id} className="relative content-card mb-4 mx-3 p-4 bg-white border rounded shadow-sm">
-                                <div className="absolute top-2 right-2">
-                                    <button onClick={() => handleMenuToggle(item.id)} className="text-gray-600">
-                                        <FaEllipsisV />
+                        {filteredContent(articles).map((item, index) => {
+                            // console.log("Timestamp received:", createdAt); // Debugging log
+
+                            let formattedTimestamp = "No Date Available"; // Default fallback
+
+                            if (item.createdAt) {  // Use `createdAt` for timestamp
+                                const date = new Date(item.createdAt); // Convert string to Date object
+
+                                if (!isNaN(date.getTime())) { // Ensure it's a valid date
+                                    formattedTimestamp = new Intl.DateTimeFormat('en-US', {
+                                        dateStyle: 'medium',
+                                        timeStyle: 'short',
+                                    }).format(date);
+                                }
+                            }
+
+                            return (
+                                <div
+                                    key={item._id || index} // Ensure uniqueness
+                                    className="relative content-card mb-4 mx-3 p-4 bg-white border rounded shadow-sm"
+                                >
+                                    {/* Menu Button */}
+                                    <div className="absolute top-2 right-2">
+                                        <button onClick={() => handleMenuToggle(item._id)} className="text-gray-600">
+                                            <FaEllipsisV />
+                                        </button>
+                                        {menuOpen === item._id && (
+                                            <div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-lg">
+                                                <button
+                                                    className="block w-full px-4 py-2 text-left hover:bg-gray-100"
+                                                    onClick={() => handleToggleFavorite(item._id)}
+                                                >
+                                                    {favorites.includes(item._id) ? "Remove from Favorites" : "Add to Favorites"}
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* Content */}
+                                    <h3 className="text-xl font-semibold">{item.title}</h3>
+                                    <p className="text-gray-700">{item.description}</p>
+                                    <p className="text-sm text-gray-500">{`Posted on: ${formattedTimestamp}`}</p>
+
+                                    {/* Expandable Section */}
+                                    <button
+                                        className="text-blue-500 hover:underline"
+                                        onClick={() => setExpandedCard(expandedCard === item._id ? null : item._id)}
+                                    >
+                                        {expandedCard === item._id ? 'Show Less' : 'Read More'}
                                     </button>
-                                    {menuOpen === item.id && (
-                                        <div className="absolute right-0 mt-2 w-40 bg-white border rounded shadow-lg">
-                                            <button
-                                                className="block w-full px-4 py-2 text-left hover:bg-gray-100"
-                                                onClick={() => handleToggleFavorite(item.id)}
-                                            >
-                                                {favorites.includes(item.id) ? "Remove from Favorites" : "Add to Favorites"}
-                                            </button>
 
+                                    {expandedCard === item._id && (
+                                        <div className="mt-2">
+                                            <p className="text-gray-600"><strong>Causes:</strong> {item.causes}</p>
+                                            <p className="text-gray-700"><strong>Diagnosis:</strong> {item.diagnosis}</p>
+                                            <p className="text-gray-700"><strong>Treatment:</strong> {item.treatment}</p>
 
+                                            {/* Exercises */}
+                                            <h4 className="mt-2 font-semibold">Exercises:</h4>
+                                            <ul className="list-disc pl-4">
+                                                {item.exercise.split(',').map((exercise, index) => (
+                                                    <li key={`${item._id || index}-exercise`}>
+                                                        <a href="#" className="text-blue-500 hover:underline">
+                                                            {exercise.trim()}
+                                                        </a>
+                                                    </li>
+                                                ))}
+                                            </ul>
                                         </div>
                                     )}
                                 </div>
-
-                                <h3 className="text-xl font-semibold">{item.title}</h3>
-                                <p className="text-gray-700">{item.description}</p>
-                                <p className="text-sm text-gray-500">{`Posted on: ${new Date(item.timestamp).toLocaleString()}`}</p>
-                                <button
-                                    className="text-blue-500 hover:underline"
-                                    onClick={() => setExpandedCard(expandedCard === item.id ? null : item.id)}
-                                >
-                                    {expandedCard === item.id ? 'Show Less' : 'Read More'}
-                                </button>
-                                {expandedCard === item.id && (
-                                    <div className="mt-2">
-                                        <p className="text-gray-600"><strong>Causes:</strong> {item.causes}</p>
-                                        <p className="text-gray-700"><strong>Diagnosis:</strong> {item.diagnosis}</p>
-                                        <p className="text-gray-700"><strong>Treatment:</strong> {item.treatment}</p>
-
-                                        <h4 className="mt-2 font-semibold">Exercises:</h4>
-                                        <ul className="list-disc pl-4">
-                                            {item.exercise.split(',').map((exercise, index) => (
-                                                <li key={index}>
-                                                    <a href={`#`} className="text-blue-500 hover:underline">
-                                                        {exercise.trim()}
-                                                    </a>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                )}
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 )}
-
 
 
             </div>
         </div>
     );
 };
-
 export default ResourcePage;

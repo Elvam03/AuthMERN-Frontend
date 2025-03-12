@@ -34,7 +34,7 @@ export const login = async (userData) => {
 
 export const fetchProtectedData = async () => {
   const token = localStorage.getItem("token");
-  console.log("Fetching protected data with token:", token); // Debugging  
+  // console.log("Fetching protected data with token:", token); // Debugging  
 
   if (!token) {
     console.error("No token found!");
@@ -46,7 +46,7 @@ export const fetchProtectedData = async () => {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    console.log("Protected Data Response:", response.data);
+    // console.log("Protected Data Response:", response.data);
     return response.data;
   } catch (error) {
     console.error("Fetch Protected Data Error:", error.response || error.message);
