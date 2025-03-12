@@ -11,13 +11,14 @@ import ResetPassword from "./Pages/ResetPassword";
 import ResourcePage from "./Pages/ResourcePage";
 import AdminDashboard from "./Pages/adminDashboard";
 
+const { user } = useContext(AuthContext);
+
 const ProtectedRoute = ({ children }) => {
-  const { user } = useContext(AuthContext);
   return user ? children : <Navigate to="/login" />;
 };
 
 const AdminRoute = ({ children }) => {
-  const { user } = useContext(AuthContext);
+  // const { user } = useContext(AuthContext);
   const isAdmin = user?.isAdmin || localStorage.getItem("isAdmin") === "true";
 
   return isAdmin ? children : <Navigate to="/dashboard" />;
