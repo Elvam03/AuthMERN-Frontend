@@ -63,8 +63,11 @@ export const AuthProvider = ({ children }) => {
         }
 
         localStorage.setItem("token", data.token);
+        
+        localStorage.setItem("isAdmin", data.isAdmin);
 
         const userDataFetched = await fetchProtectedData(data.token);
+
 
         if (!userDataFetched || !userDataFetched._id) {
             throw new Error("Login failed: User data not found");
@@ -79,12 +82,12 @@ export const AuthProvider = ({ children }) => {
             location: userDataFetched.location,
             userId: userDataFetched._id,
             token: data.token, 
-            isAdmin: userDataFetched.isAdmin,
+            isAdmin: data.isAdmin,
         };
 
         setUser(userObj);
         localStorage.setItem("user", JSON.stringify(userObj));
-        localStorage.setItem("isAdmin", userDataFetched.isAdmin);
+  
 
         setError("");
 

@@ -46,11 +46,21 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+
     if (!validateForm()) return;
 
     try {
       await handleLogin(formData);
-      navigate("/dashboard");
+      
+      const isAdmin = JSON.parse(localStorage.getItem("isAdmin") || "false");
+
+      if (isAdmin) {
+          navigate("/admin-dashboard"); // ✅ Redirect admin to admin dashboard
+      } else {
+          navigate("/dashboard"); // ✅ Redirect normal users
+      }
+      
+      // navigate("/dashboard");
     } catch (err) {
       setErrors((prevErrors) => ({
         ...prevErrors,
