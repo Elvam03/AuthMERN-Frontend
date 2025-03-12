@@ -52,17 +52,18 @@ export const AuthProvider = ({ children }) => {
     try {
         const data = await login(userData);
 
-        if (!data.token) {
-            throw new Error("Login failed: token not received");
+        if (!data || !data.token) {
+            throw new Error(data.message || "Login failed: Invalid credentials");
         }
 
         localStorage.setItem("token", data.token);
 
         const userDataFetched = await fetchProtectedData(data.token);
 
-        console.log("User data after login:", userDataFetched); // Debugging
+        if (!userDataFetched || !userDataFetched._id) {
+            throw new Error("Login failed: User data not found");
+        }
 
-        // ✅ Define userObj BEFORE using it
         const userObj = {
             firstName: userDataFetched.firstName || "", 
             secondName: userDataFetched.secondName || "",
@@ -70,17 +71,20 @@ export const AuthProvider = ({ children }) => {
             age: userDataFetched.age,
             phone: userDataFetched.phone,
             location: userDataFetched.location,
-            userId: userDataFetched._id,  // ✅ Ensure _id is stored properly
+            userId: userDataFetched._id,
             token: data.token, 
         };
 
         setUser(userObj);
-        localStorage.setItem("user", JSON.stringify(userObj));  // ✅ Store full user object in localStorage
+        localStorage.setItem("user", JSON.stringify(userObj));
 
         setError("");
     } catch (error) {
         console.error("Login Error:", error);
         setError(error.message || "Login failed");
+
+        // 🔴 Ensure that an invalid login does NOT keep any token stored
+        localStorage.removeItem("token");
     }
 };
 
