@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 const AdminDashboard = () => {
   const { user } = useContext(AuthContext);
-  
+
   const navigate = useNavigate();
   
   const [resources, setResources] = useState([]);
@@ -33,7 +33,7 @@ const AdminDashboard = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:5000/api/admin/add-resource", {
+      const res = await fetch("http://localhost:5000/api/add-resource", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -53,7 +53,7 @@ const AdminDashboard = () => {
 
   const deleteResource = async (id) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/admin/delete-resource/${id}`, {
+      const res = await fetch(`http://localhost:5000/api/delete-resource/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${user.token}`,

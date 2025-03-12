@@ -56,18 +56,13 @@ export const AuthProvider = ({ children }) => {
         const data = await login(userData);
 
         if (!data || !data.token) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-
             throw new Error(data.message || "Login failed: Invalid credentials");
         }
 
         localStorage.setItem("token", data.token);
-        
-        localStorage.setItem("isAdmin", data.isAdmin);
 
+        // ✅ Fetch user data securely after login
         const userDataFetched = await fetchProtectedData(data.token);
-
 
         if (!userDataFetched || !userDataFetched._id) {
             throw new Error("Login failed: User data not found");
@@ -82,27 +77,21 @@ export const AuthProvider = ({ children }) => {
             location: userDataFetched.location,
             userId: userDataFetched._id,
             token: data.token, 
-            isAdmin: data.isAdmin,
+            isAdmin: userDataFetched.isAdmin, // Ensure this is correct!
         };
 
         setUser(userObj);
         localStorage.setItem("user", JSON.stringify(userObj));
-  
+        localStorage.setItem("isAdmin", userDataFetched.isAdmin); // Store isAdmin correctly
 
         setError("");
-
-        if (userObj.isAdmin) {
-          navigate("/admin-dashboard"); // Redirect admin users
-      } else {
-          navigate("/dashboard"); // Redirect normal users
-      }
-      
     } catch (error) {
         console.error("Login Error:", error);
         setError(error.message || "Login failed");
 
         // 🔴 Ensure that an invalid login does NOT keep any token stored
         localStorage.removeItem("token");
+        localStorage.removeItem("isAdmin");
     }
 };
 
