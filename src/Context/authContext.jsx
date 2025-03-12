@@ -1,7 +1,9 @@
 import { createContext, useState, useEffect } from "react";
 import { signup, login, fetchProtectedData } from "../api/authApi";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
+const navigate = useNavigate();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -76,13 +78,21 @@ export const AuthProvider = ({ children }) => {
             location: userDataFetched.location,
             userId: userDataFetched._id,
             token: data.token, 
-            isAdmin: data.isAdmin,
+            isAdmin: userDataFetched.isAdmin,
         };
 
         setUser(userObj);
         localStorage.setItem("user", JSON.stringify(userObj));
+        localStorage.setItem("isAdmin", userDataFetched.isAdmin);
 
         setError("");
+
+        if (userObj.isAdmin) {
+          navigate("/admin-dashboard"); // Redirect admin users
+      } else {
+          navigate("/dashboard"); // Redirect normal users
+      }
+      
     } catch (error) {
         console.error("Login Error:", error);
         setError(error.message || "Login failed");
