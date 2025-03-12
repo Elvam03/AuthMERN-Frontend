@@ -3,12 +3,13 @@ import { signup, login, fetchProtectedData } from "../api/authApi";
 import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
-const navigate = useNavigate();
+
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
