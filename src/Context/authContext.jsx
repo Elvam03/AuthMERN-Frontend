@@ -53,6 +53,9 @@ export const AuthProvider = ({ children }) => {
         const data = await login(userData);
 
         if (!data || !data.token) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          
             throw new Error(data.message || "Login failed: Invalid credentials");
         }
 
