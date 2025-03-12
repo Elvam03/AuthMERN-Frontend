@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }) => {
         if (!data || !data.token) {
           localStorage.removeItem("token");
           localStorage.removeItem("user");
-          
+
             throw new Error(data.message || "Login failed: Invalid credentials");
         }
 
@@ -76,6 +76,7 @@ export const AuthProvider = ({ children }) => {
             location: userDataFetched.location,
             userId: userDataFetched._id,
             token: data.token, 
+            isAdmin: data.isAdmin,
         };
 
         setUser(userObj);
