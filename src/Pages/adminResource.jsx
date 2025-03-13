@@ -76,6 +76,7 @@ const AdminResource = () => {
       const res = await fetch(`https://authmern-backend-i3kc.onrender.com/api/delete-resource/${id}`, {
         method: "DELETE",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${user.token}`,
         },
       });
