@@ -55,7 +55,7 @@ const Login = () => {
       const isAdmin = JSON.parse(localStorage.getItem("isAdmin") || "false");
 
       if (isAdmin) {
-          navigate("/admin-dashboard"); // ✅ Redirect admin to admin dashboard
+          navigate("/admin-resource"); // ✅ Redirect admin to admin dashboard
       } else {
           navigate("/dashboard"); // ✅ Redirect normal users
       }

@@ -10,6 +10,7 @@ import ForgotPassword from "./Pages/ForgotPassword";
 import ResetPassword from "./Pages/ResetPassword";
 import ResourcePage from "./Pages/ResourcePage";
 import AdminDashboard from "./Pages/adminDashboard"
+import AdminResource from "./Pages/adminResource";
 
 
 const ProtectedRoute = ({ children }) => {
@@ -41,8 +42,7 @@ function App() {
         <Route path="/profilePage" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
         <Route path="/resourcePage" element={<ProtectedRoute><ResourcePage /></ProtectedRoute>} />
         <Route path="/admin-dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
-
-
+        <Route path="/admin-resource" element={<AdminRoute><AdminResource /></AdminRoute>} />
 
 
       </Routes>
