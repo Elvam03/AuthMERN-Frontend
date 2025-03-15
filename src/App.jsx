@@ -15,6 +15,7 @@ import FacilitySection from "./Pages/FacilitySection";
 import FacilityPage from "./Pages/FacilityPage";
 import AdminFacility from "./Pages/adminFacility";
 import AdminAds from "./Pages/adminAds";
+import ForumSection from "./Pages/ForumSection";
 
 
 const ProtectedRoute = ({ children }) => {
@@ -45,6 +46,7 @@ function App() {
         <Route path="/forgotPassword" element={<ForgotPassword />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/forumSection" element={<ProtectedRoute><ForumSection /></ProtectedRoute>} />
         <Route path="/profilePage" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
         <Route path="/resourcePage" element={<ProtectedRoute><ResourcePage /></ProtectedRoute>} />
         <Route path="/admin-dashboard" element={<AdminRoute><AdminDashboard /></AdminRoute>} />

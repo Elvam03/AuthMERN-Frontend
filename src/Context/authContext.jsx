@@ -77,6 +77,7 @@ export const AuthProvider = ({ children }) => {
             location: userDataFetched.location,
             userId: userDataFetched._id,
             token: data.token, 
+            profileImage: data.profileImage,
             isAdmin: userDataFetched.isAdmin, // Ensure this is correct!
         };
 
