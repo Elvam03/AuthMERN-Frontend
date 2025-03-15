@@ -32,11 +32,12 @@ const AdminResource = () => {
 
 
   useEffect(() => {
-    if (!user || !user.isAdmin) {
-      navigate("/");
-    } else {
+    // if (!user || !user.isAdmin) {
+    //   navigate("/");
+      if (!user?.isAdmin) navigate("/");
+
       fetchResources();
-    }
+    
   }, [user, navigate]);
 
   const fetchResources = async () => {

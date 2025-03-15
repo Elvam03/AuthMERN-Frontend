@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import PasswordInput from "../Inputs/passwordInput"; // ✅ Import PasswordInput
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import LandingNavbar from "../Components/LandingNavbar";
 
 const SignUp = () => {
     const { handleSignup } = useContext(AuthContext);
@@ -59,7 +60,11 @@ const SignUp = () => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-amber-50">
+       <div>
+        <div>
+            <LandingNavbar />
+        </div>
+         <div className="flex flex-col items-center justify-center min-h-screen bg-amber-50">
             <h2 className="text-2xl font-bold mb-4">Sign Up</h2>
 
             {error && <p className="text-red-500 text-xs">{error}</p>}
@@ -136,6 +141,7 @@ const SignUp = () => {
                 </form>
             </div>
         </div>
+       </div>
     );
 };
 

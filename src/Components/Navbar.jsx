@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 import ProfileCard from "./ProfileCard";
-// import SearchBar from "./Searchbar";
 import AuthContext from "../Context/authContext";
 import { Link } from "react-router-dom";
 

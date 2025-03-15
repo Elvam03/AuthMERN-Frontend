@@ -11,3 +11,10 @@ Currently, two official plugins are available:
 
 If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
 
+ const advertisements = [
+        { title: "Premium Care Clinic", link: "facilityPage", image: "/Images/hospital1.jpg", description: "Advanced treatments with top doctors." },
+        { title: "Health First Medical", link: "/facilityPage", image: "/Images/hospital2.jpg", description: "Your health, our priority." },
+        { title: "Family Wellness Center", link: "/facilityPage", image: "/Images/hospital3.jpg", description: "Comprehensive family health services." },
+    ];
+
+    const locations = ["Mombasa", "Kakamega", "Nairobi", "Eldoret", "Nakuru", "Kisumu", "Lamu", "Kisii", "Busia"];

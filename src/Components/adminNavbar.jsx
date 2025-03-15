@@ -2,8 +2,6 @@ import { Link } from "react-router-dom";
 import AuthContext from "../Context/authContext";
 import { useContext } from "react";
 
-
-
 const AdminNavbar = () => {
   const { user, handleLogout } = useContext(AuthContext);
 
@@ -15,8 +13,8 @@ const AdminNavbar = () => {
       <Link to="/admin-dashboard" className="hover:underline">
           Main
         </Link>
-        <Link to="/admin-clinics" className="hover:underline">
-          Clinics
+        <Link to="/admin-facility" className="hover:underline">
+          Facilities
         </Link>
         <Link to="/admin-resource" className="hover:underline">
           Resources

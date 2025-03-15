@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import AuthContext from "../Context/authContext";
 import { Link } from "react-router-dom";
 import PasswordInput from "../Inputs/passwordInput";
+import LandingNavbar from "../Components/LandingNavbar"
 
 const Login = () => {
   const { handleLogin, error: authError } = useContext(AuthContext); // ✅ Auth error from context
@@ -55,7 +56,7 @@ const Login = () => {
       const isAdmin = JSON.parse(localStorage.getItem("isAdmin") || "false");
 
       if (isAdmin) {
-          navigate("/admin-resource"); // ✅ Redirect admin to admin dashboard
+          navigate("/admin-dashboard"); // ✅ Redirect admin to admin dashboard
       } else {
           navigate("/dashboard"); // ✅ Redirect normal users
       }
@@ -72,7 +73,12 @@ const Login = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-amber-50">
+    <div>
+      <div>
+        <LandingNavbar />
+      </div>
+      <div className="flex flex-col items-center justify-center min-h-screen bg-amber-50">
+      
       <h2 className="text-2xl font-bold mb-4">Login</h2>
       <div className="md:w-96 border border-gray-300 rounded-lg bg-white px-7 py-10">
         <form className="w-60 md:w-80 space-y-4" onSubmit={handleSubmit}>
@@ -123,6 +129,7 @@ const Login = () => {
           
         </form>
       </div>
+    </div>
     </div>
   );
 };
